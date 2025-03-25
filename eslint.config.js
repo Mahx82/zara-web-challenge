@@ -29,7 +29,6 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
-      'prettier/prettier': 'warn',
     },
   },
   {
