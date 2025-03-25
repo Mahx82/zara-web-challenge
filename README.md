@@ -145,6 +145,7 @@ zara-web-challenge/
 │   ├── services/        # Modules for API calls and data types
 │   │   ├── api/         # API service modules for making HTTP requests
 │   │   ├── db/          # Modules for interacting with IndexedDB
+│   ├── utils/           # Utility functions and helper modules
 ```
 
 ### Data flow

@@ -66,10 +66,22 @@ describe('CharacterDetail', () => {
       data: {
         id: 1,
         name: 'Goku',
-        image: '/goku.jpg',
+        image: 'goku.jpg',
         description: 'Saiyan Warrior',
         transformations: [
-          { id: 101, image: '/ssj.jpg', name: 'Super Saiyan', ki: '9000+' },
+          {
+            id: 102,
+            image: 'ssj2.jpg',
+            name: 'Super Saiyan 2',
+            ki: '3 trillion',
+          },
+          { id: 103, image: 'ssj3.jpg', name: 'Super Saiyan', ki: '9.000.000' },
+          {
+            id: 101,
+            image: 'ssj.jpg',
+            name: 'Super Saiyan 3',
+            ki: '7 Septillion',
+          },
         ],
       },
       isPending: false,
@@ -84,8 +96,24 @@ describe('CharacterDetail', () => {
     );
 
     expect(screen.getByText('Goku')).toBeInTheDocument();
+    expect(screen.getByAltText('Goku')).toHaveAttribute('src', 'goku.jpg');
     expect(screen.getByText('Saiyan Warrior')).toBeInTheDocument();
-    expect(screen.getByText('Super Saiyan')).toBeInTheDocument();
+
+    const transformations = screen.getAllByTestId('transformation');
+    const sortedTransformations = [
+      { id: 103, image: 'ssj3.jpg', name: 'Super Saiyan', ki: '9.000.000' },
+      { id: 102, image: 'ssj2.jpg', name: 'Super Saiyan 2', ki: '3 trillion' },
+      { id: 101, image: 'ssj.jpg', name: 'Super Saiyan 3', ki: '7 Septillion' },
+    ];
+
+    sortedTransformations.forEach((transformation, index) => {
+      const transformationElement = transformations[index];
+      expect(transformationElement).toHaveTextContent(transformation.name);
+      expect(transformationElement.querySelector('img')).toHaveAttribute(
+        'src',
+        transformation.image,
+      );
+    });
   });
 
   it("displays the 'no transformations' message when the character has no transformations", () => {

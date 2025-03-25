@@ -18,9 +18,9 @@ export interface CarouselItemProps {
   info: string;
 }
 
-function Item({ image, name, info }: CarouselItemProps) {
+function Item({ image, name, info, ...rest }: CarouselItemProps) {
   return (
-    <li>
+    <li {...rest}>
       <div className="h-[318px] w-[179px] overflow-hidden">
         <img className="mx-auto h-full object-cover" src={image} alt={name} />
       </div>

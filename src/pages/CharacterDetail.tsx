@@ -3,6 +3,7 @@ import { Carousel } from '@/components/character-details/Carousel';
 import { HeroDetail } from '@/components/character-details/HeroDetail';
 import { useParams } from 'react-router';
 import { CharacterByIdResponse } from '@/services/types';
+import { sortByKi } from '@/utils/sortByKi';
 
 interface Transformations {
   id: number;
@@ -49,11 +50,19 @@ export function CharacterDetail() {
       </h2>
       {transformations.length > 0 ? (
         <Carousel>
-          {transformations.map(({ id, image, name, ki }: Transformations) => {
-            return (
-              <Carousel.Item key={id} image={image} name={name} info={ki} />
-            );
-          })}
+          {sortByKi(transformations).map(
+            ({ id, image, name, ki }: Transformations) => {
+              return (
+                <Carousel.Item
+                  key={id}
+                  image={image}
+                  name={name}
+                  info={ki}
+                  data-testid="transformation"
+                />
+              );
+            },
+          )}
         </Carousel>
       ) : (
         <div className="mx-4 max-w-[960px] md:mx-12 lg:mx-auto">
