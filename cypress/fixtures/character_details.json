@@ -1,0 +1,29 @@
+{
+  "id": 1,
+  "name": "Goku",
+  "image": "goku.jpg",
+  "description": "Goku description",
+  "transformations": [
+    {
+      "id": 1,
+      "name": "Goku SSJ",
+      "image": "goku_ssj.webp",
+      "ki": "3 Billion",
+      "deletedAt": null
+    },
+    {
+      "id": 2,
+      "name": "Goku SSJ2",
+      "image": "goku_ssj2.webp",
+      "ki": "6 Billion",
+      "deletedAt": null
+    },
+    {
+      "id": 3,
+      "name": "Goku SSJ3",
+      "image": "goku_ssj3.webp",
+      "ki": "24 Billion",
+      "deletedAt": null
+    }
+  ]
+}
