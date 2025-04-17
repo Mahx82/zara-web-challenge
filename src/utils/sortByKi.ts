@@ -9,11 +9,12 @@ const units = {
 };
 
 export function parseKiValue(ki: string): bigint {
-  if (/^\d{1,3}(?:\.\d{3})*(?:,\d+)?$/.test(ki)) {
+  const trimmedKi = ki.trim();
+  if (/^\d{1,3}(?:\.\d{3})*(?:,\d+)?$/.test(trimmedKi)) {
     return BigInt(ki.replace(/\./g, ''));
   }
 
-  const match = ki.match(
+  const match = trimmedKi.match(
     /^([\d,.]+)\s*(million|billion|trillion|quadrillion|quintillion|sextillion|septillion)$/i,
   );
   if (match) {
