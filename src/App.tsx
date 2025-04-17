@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Home } from '@/pages/Home';
 import { CharacterDetail } from '@/pages/CharacterDetail';
 import { Layout } from '@/layout/Layout';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,6 +23,7 @@ function App() {
           <Route path="/:id" element={<CharacterDetail />} />
         </Route>
       </Routes>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }
