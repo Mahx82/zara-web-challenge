@@ -11,24 +11,21 @@ describe('Character details page', () => {
     });
 
     it('should render the character detail page', () => {
+      cy.get('[aria-label="Loading character details"]').should('exist');
       cy.contains('Goku').should('exist');
       cy.contains('Goku description').should('exist');
       cy.get('img[alt="Goku"]').should('have.attr', 'src', 'goku.jpg');
       cy.contains('Transformations').should('exist');
-      cy.contains('Goku SSJ').should('exist');
-      cy.get('img[alt="Goku SSJ"]').should('have.attr', 'src', 'goku_ssj.webp');
-      cy.contains('Goku SSJ2').should('exist');
-      cy.get('img[alt="Goku SSJ2"]').should(
-        'have.attr',
-        'src',
-        'goku_ssj2.webp',
-      );
-      cy.contains('Goku SSJ3').should('exist');
-      cy.get('img[alt="Goku SSJ3"]').should(
-        'have.attr',
-        'src',
-        'goku_ssj3.webp',
-      );
+      const transformations = [
+        { name: 'Goku SSJ', img: 'goku_ssj.webp', ki: '3 Billion' },
+        { name: 'Goku SSJ2', img: 'goku_ssj2.webp', ki: '6 Billion' },
+        { name: 'Goku SSJ3', img: 'goku_ssj3.webp', ki: '24 Billion' },
+      ];
+
+      transformations.forEach(({ name, img }) => {
+        cy.contains(name).should('exist');
+        cy.get(`img[alt="${name}"]`).should('have.attr', 'src', img);
+      });
     });
 
     it('should add and remove Goku from favorites', () => {
@@ -65,7 +62,7 @@ describe('Character details page', () => {
 
       for (let i = 0; i < 3; i++) {
         cy.wait('@getCharacterDetails');
-        cy.contains('Loading...').should('exist');
+        cy.get('[aria-label="Loading character details"]').should('exist');
       }
       cy.wait('@getCharacterDetails');
       cy.contains('Failed to fetch character details').should('exist');
