@@ -1,3 +1,9 @@
+import { selectors } from '../support/selectors';
+
+const detailsSelectors = {
+  loader: '[aria-label="Loading character details"]',
+};
+
 describe('Character details page', () => {
   describe('happy path', () => {
     beforeEach(() => {
@@ -11,7 +17,7 @@ describe('Character details page', () => {
     });
 
     it('should render the character detail page', () => {
-      cy.get('[aria-label="Loading character details"]').should('exist');
+      cy.get(detailsSelectors.loader).should('exist');
       cy.contains('Goku').should('exist');
       cy.contains('Goku description').should('exist');
       cy.get('img[alt="Goku"]').should('have.attr', 'src', 'goku.jpg');
@@ -34,11 +40,11 @@ describe('Character details page', () => {
       cy.contains('Goku description').should('exist');
       cy.get('img[alt="Goku"]').should('have.attr', 'src', 'goku.jpg');
 
-      cy.get('button[aria-label="Add to favorites"]').click();
-      cy.get('[data-testid="favorites-counter"]').should('contain', '1');
+      cy.get(selectors.addToFavoritesButton).click();
+      cy.get(selectors.favoritesCounter).should('contain', '1');
 
-      cy.get('button[aria-label="Remove from favorites"]').click();
-      cy.get('[data-testid="favorites-counter"]').should('contain', '0');
+      cy.get(selectors.removeFromFavoritesButton).click();
+      cy.get(selectors.favoritesCounter).should('contain', '0');
     });
   });
 
@@ -63,7 +69,7 @@ describe('Character details page', () => {
 
       for (let i = 0; i < 3; i++) {
         cy.wait('@getCharacterDetails');
-        cy.get('[aria-label="Loading character details"]').should('exist');
+        cy.get(detailsSelectors.loader).should('exist');
       }
       cy.wait('@getCharacterDetails');
       cy.contains('Failed to fetch character details').should('exist');

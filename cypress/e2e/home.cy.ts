@@ -1,3 +1,25 @@
+import { selectors } from '../support/selectors';
+
+const characters = {
+  goku: {
+    name: 'Goku',
+    img: 'goku.jpg',
+  },
+  vegeta: {
+    name: 'Vegeta',
+    img: 'vegeta.jpg',
+  },
+  gohan: {
+    name: 'Gohan',
+    img: 'gohan.jpg',
+  },
+};
+
+const homeSelectors = {
+  searchInput: 'input[placeholder="Search a character..."]',
+  loader: '[aria-label="Loading characters"]',
+};
+
 describe('Home', () => {
   describe('happy paths', () => {
     beforeEach(() => {
@@ -13,16 +35,14 @@ describe('Home', () => {
     });
 
     it('should render the home page with character cards', () => {
-      cy.contains('Loading...').should('exist');
+      cy.get(homeSelectors.loader).should('exist');
       cy.wait('@getCharacters');
       cy.get('[data-testid="character-card"]').should('have.length', 3);
       cy.contains('3 results').should('exist');
-      cy.contains('Goku').should('exist');
-      cy.get('img[alt="Goku"]').should('have.attr', 'src', 'goku.jpg');
-      cy.contains('Vegeta').should('exist');
-      cy.get('img[alt="Vegeta"]').should('have.attr', 'src', 'vegeta.jpg');
-      cy.contains('Gohan').should('exist');
-      cy.get('img[alt="Gohan"]').should('have.attr', 'src', 'gohan.jpg');
+      Object.values(characters).forEach(({ name, img }) => {
+        cy.contains(name).should('exist');
+        cy.get(`img[alt="${name}"]`).should('have.attr', 'src', img);
+      });
     });
 
     it('should search for a character', () => {
@@ -38,80 +58,76 @@ describe('Home', () => {
         ).as('searchCharacter');
       });
 
-      cy.get('input[placeholder="Search a character..."]')
-        .should('exist')
-        .type('goku');
+      cy.get(homeSelectors.searchInput).as('input-search');
+      cy.get('@input-search').type('goku');
       cy.url().should('include', '/?name=goku');
       cy.wait('@searchCharacter');
-      cy.contains('Goku').should('exist');
-      cy.get('img[alt="Goku"]').should('have.attr', 'src', 'goku.jpg');
-      cy.contains('Vegeta').should('not.exist');
+      cy.contains(characters.goku.name).should('exist');
+      cy.get(`img[alt="${characters.goku.name}"]`).should(
+        'have.attr',
+        'src',
+        characters.goku.img,
+      );
+      cy.contains(characters.vegeta.name).should('not.exist');
     });
 
     it('should increase the favorites counter when a character is favorited', () => {
       indexedDB.deleteDatabase('FavoritesDB');
 
-      cy.contains('Goku')
+      cy.contains(characters.goku.name)
         .parent()
-        .find('button[aria-label="Add to favorites"]')
+        .find(selectors.addToFavoritesButton)
         .click();
-      cy.get('[data-testid="favorites-counter"]').should('contain', '1');
+      cy.get(selectors.favoritesCounter).should('contain', '1');
     });
 
     it('should navigate to Favorites view and search from favorited characters', () => {
       indexedDB.deleteDatabase('FavoritesDB');
+      cy.addCardToFavorites(characters.goku.name);
+      cy.addCardToFavorites(characters.gohan.name);
 
-      cy.contains('Goku')
-        .parent()
-        .find('button[aria-label="Add to favorites"]')
-        .click();
-      cy.contains('Gohan')
-        .parent()
-        .find('button[aria-label="Add to favorites"]')
-        .click();
+      cy.get(homeSelectors.searchInput).should('exist').type('goku');
+      cy.contains(characters.goku.name).should('exist');
+      cy.get(`img[alt="${characters.goku.name}"]`).should(
+        'have.attr',
+        'src',
+        characters.goku.img,
+      );
+      cy.contains(characters.vegeta.name).should('not.exist');
+      cy.contains(characters.gohan.name).should('not.exist');
 
-      cy.get('input[placeholder="Search a character..."]')
-        .should('exist')
-        .type('goku');
-      cy.contains('Goku').should('exist');
-      cy.get('img[alt="Goku"]').should('have.attr', 'src', 'goku.jpg');
-      cy.contains('Vegeta').should('not.exist');
-      cy.contains('Gohan').should('not.exist');
-
-      cy.get('[data-testid="favorites-counter"]').click();
+      cy.get(selectors.favoritesCounter).click();
       cy.url().should('include', '/?name=goku&showFavorites=true');
       cy.contains('Favorites').should('exist');
-      cy.contains('Goku').should('exist');
-      cy.contains('Gohan').should('not.exist');
-      cy.contains('Vegeta').should('not.exist');
+      cy.contains(characters.goku.name).should('exist');
+      cy.contains(characters.gohan.name).should('not.exist');
+      cy.contains(characters.vegeta.name).should('not.exist');
     });
 
     it('should search characters and go to Favorites with the same search applied', () => {
       indexedDB.deleteDatabase('FavoritesDB');
 
-      cy.contains('Goku')
-        .parent()
-        .find('button[aria-label="Add to favorites"]')
-        .click();
-      cy.contains('Gohan')
-        .parent()
-        .find('button[aria-label="Add to favorites"]')
-        .click();
-      cy.get('[data-testid="favorites-counter"]').should('contain', '2');
-      cy.get('[data-testid="favorites-counter"]').click();
+      cy.addCardToFavorites(characters.goku.name);
+      cy.addCardToFavorites(characters.gohan.name);
+      const getFavoritesCounter = cy.get(selectors.favoritesCounter);
+      getFavoritesCounter.should('contain', '2');
+      getFavoritesCounter.click();
+
       cy.url().should('include', '/?showFavorites=true');
       cy.contains('Favorites').should('exist');
-      cy.contains('Goku').should('exist');
-      cy.contains('Gohan').should('exist');
-      cy.contains('Vegeta').should('not.exist');
-      cy.get('input[placeholder="Search a character..."]')
-        .should('exist')
-        .type('goku');
+      cy.contains(characters.goku.name).should('exist');
+      cy.contains(characters.gohan.name).should('exist');
+      cy.contains(characters.vegeta.name).should('not.exist');
+      cy.get(homeSelectors.searchInput).should('exist').type('goku');
 
-      cy.contains('Goku').should('exist');
-      cy.get('img[alt="Goku"]').should('have.attr', 'src', 'goku.jpg');
-      cy.contains('Vegeta').should('not.exist');
-      cy.contains('Gohan').should('not.exist');
+      cy.contains(characters.goku.name).should('exist');
+      cy.get(`img[alt="${characters.goku.name}"]`).should(
+        'have.attr',
+        'src',
+        characters.goku.img,
+      );
+      cy.contains(characters.vegeta.name).should('not.exist');
+      cy.contains(characters.gohan.name).should('not.exist');
     });
 
     it('should navigate to the character detail page', () => {
@@ -126,7 +142,7 @@ describe('Home', () => {
         }).as('characterDetails');
       });
 
-      cy.contains('Goku').click();
+      cy.contains(characters.goku.name).click();
       cy.url().should('include', '/1');
     });
   });
@@ -140,10 +156,10 @@ describe('Home', () => {
 
       for (let i = 0; i < 3; i++) {
         cy.wait('@getCharacters');
-        cy.contains('Loading...').should('exist');
+        cy.get(homeSelectors.loader).should('exist');
       }
       cy.wait('@getCharacters');
-      cy.contains('An error ocurred. Please try again later.').should('exist');
+      cy.contains('An error occurred. Please try again later.').should('exist');
     });
   });
 });

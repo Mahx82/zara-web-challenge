@@ -1,4 +1,8 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 /// <reference types="cypress" />
+
+import { selectors } from '../support/selectors';
+
 // ***********************************************
 // This example commands.ts shows you how to
 // Create various custom commands and overwrite
@@ -35,3 +39,15 @@
 //     }
 //   }
 // }
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      addCardToFavorites(name: string): Chainable<JQuery<HTMLElement>>;
+    }
+  }
+}
+
+Cypress.Commands.add('addCardToFavorites', (name) => {
+  cy.contains(name).parent().find(selectors.addToFavoritesButton).click();
+});
