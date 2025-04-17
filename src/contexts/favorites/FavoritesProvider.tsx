@@ -10,8 +10,13 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
     searchParams.get(QUERY_PARAMS.SHOW_FAVORITES) === 'true';
   const characterName = searchParams.get(QUERY_PARAMS.NAME) ?? undefined;
 
-  const { favorites, favoritesCount, toggleFavorite, isFavorite } =
-    useFavoritesDB(characterName);
+  const {
+    favorites,
+    favoritesCount,
+    favoritesResults,
+    toggleFavorite,
+    isFavorite,
+  } = useFavoritesDB(characterName);
 
   return (
     <FavoritesContext.Provider
@@ -19,6 +24,7 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
         favorites,
         isShowingFavorites,
         favoritesCount,
+        favoritesResults,
         toggleFavorite,
         isFavorite,
       }}

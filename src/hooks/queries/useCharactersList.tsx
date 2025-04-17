@@ -2,15 +2,16 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchCharacters } from '@/services/api/characters';
 import {
   CharacterResponse,
+  CharactersApiResponse,
   CharactersPaginatedResponse,
 } from '@/services/types';
 
 export function useCharactersList(enabled: boolean, nameFilter?: string) {
-  return useQuery({
+  const queryResult = useQuery({
     queryKey: ['characters', nameFilter],
     queryFn: () => fetchCharacters(nameFilter),
     enabled,
-    select: (data) => {
+    select: (data: CharactersApiResponse) => {
       const isFiltered = Boolean(nameFilter);
 
       const characters = isFiltered
@@ -23,4 +24,8 @@ export function useCharactersList(enabled: boolean, nameFilter?: string) {
       return { characters, count };
     },
   });
+
+  return {
+    ...queryResult,
+  };
 }

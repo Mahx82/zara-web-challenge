@@ -14,7 +14,6 @@ describe('useFilters', () => {
     const { result } = renderHook(() => useFilters(), { wrapper });
 
     expect(result.current.characterName).toBe('Goku');
-    expect(result.current.showFavorites).toBe(true);
   });
 
   it('sets character search filter', () => {
@@ -39,13 +38,5 @@ describe('useFilters', () => {
     });
 
     expect(result.current.characterName).toBeUndefined();
-  });
-
-  it('handles showFavorites filter', () => {
-    window.history.pushState({}, 'Home page', '/?showFavorites=true');
-
-    const { result } = renderHook(() => useFilters(), { wrapper });
-
-    expect(result.current.showFavorites).toBe(true);
   });
 });

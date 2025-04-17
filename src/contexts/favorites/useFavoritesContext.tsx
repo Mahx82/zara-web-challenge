@@ -10,6 +10,7 @@ interface FavoritesContextProps {
   favorites: Character[];
   isShowingFavorites: boolean;
   favoritesCount: number;
+  favoritesResults: number;
   toggleFavorite: (character: Character) => Promise<void>;
   isFavorite: (id: number) => boolean | undefined;
 }

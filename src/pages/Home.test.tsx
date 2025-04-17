@@ -44,10 +44,10 @@ describe('Home', () => {
     });
   });
 
-  it('displays the loading message', () => {
+  it('displays the characters loading progress bar', () => {
     (useCharactersList as ReturnType<typeof vi.fn>).mockReturnValue({
       data: {},
-      isPending: true,
+      isLoading: true,
       isError: false,
       error: null,
     });
@@ -58,13 +58,13 @@ describe('Home', () => {
       </QueryClientProvider>,
     );
 
-    expect(screen.getByText(/loading.../i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/loading characters/i)).toBeInTheDocument();
   });
 
   it('displays an error message when there is an error fetching characters', () => {
     (useCharactersList as ReturnType<typeof vi.fn>).mockReturnValue({
       data: {},
-      isPending: false,
+      isLoading: false,
       isError: true,
     });
 
@@ -75,14 +75,14 @@ describe('Home', () => {
     );
 
     expect(
-      screen.getByText(/an error ocurred. Please try again later./i),
+      screen.getByText(/an error occurred. please try again later./i),
     ).toBeInTheDocument();
   });
 
-  it('displays "No characters found" when the list is empty', () => {
+  it('displays "No characters found" when the list is empty', async () => {
     (useCharactersList as ReturnType<typeof vi.fn>).mockReturnValue({
       data: { characters: [], count: 0 },
-      isPending: false,
+      isLoading: false,
       isError: false,
       error: null,
     });
@@ -93,10 +93,12 @@ describe('Home', () => {
       </QueryClientProvider>,
     );
 
-    expect(screen.getByText(/no characters found./i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/no characters found./i)).toBeInTheDocument();
+    });
   });
 
-  it('displays a list of characters when the query is successful', () => {
+  it('displays a list of characters when the query is successful', async () => {
     (useCharactersList as ReturnType<typeof vi.fn>).mockReturnValue({
       data: {
         characters: [
@@ -105,7 +107,7 @@ describe('Home', () => {
         ],
         count: 2,
       },
-      isPending: false,
+      isLoading: false,
       isError: false,
       error: null,
     });
@@ -118,11 +120,13 @@ describe('Home', () => {
       </QueryClientProvider>,
     );
 
-    expect(screen.getByText('Goku')).toBeInTheDocument();
-    expect(screen.getByText('Vegeta')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Goku')).toBeInTheDocument();
+      expect(screen.getByText('Vegeta')).toBeInTheDocument();
+    });
   });
 
-  it('displays the "Favorites" section when showing favorites', () => {
+  it('displays the "Favorites" section when showing favorites', async () => {
     (useFavoritesContext as ReturnType<typeof vi.fn>).mockReturnValue({
       favorites: [{ id: 1, name: 'Goku', image: '/goku.jpg' }],
       favoritesCount: 1,
@@ -137,8 +141,10 @@ describe('Home', () => {
       </QueryClientProvider>,
     );
 
-    expect(screen.getByText(/favorites/i)).toBeInTheDocument();
-    expect(screen.getByText('Goku')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/favorites/i)).toBeInTheDocument();
+      expect(screen.getByText('Goku')).toBeInTheDocument();
+    });
   });
 
   it('calls setFilters when searching for a character', async () => {
@@ -157,10 +163,12 @@ describe('Home', () => {
       </QueryClientProvider>,
     );
 
-    const searchInput = screen.getByRole('textbox');
+    await waitFor(async () => {
+      const searchInput = screen.getByRole('textbox');
 
-    await act(async () => {
-      await userEvent.type(searchInput, 'Goku');
+      await act(async () => {
+        await userEvent.type(searchInput, 'Goku');
+      });
     });
 
     await waitFor(() => {

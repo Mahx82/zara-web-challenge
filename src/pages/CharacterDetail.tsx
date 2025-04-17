@@ -4,6 +4,8 @@ import { HeroDetail } from '@/components/character-details/HeroDetail';
 import { useParams } from 'react-router';
 import { CharacterByIdResponse } from '@/services/types';
 import { sortByKi } from '@/utils/sortByKi';
+import { useLoader } from '@/hooks/useLoader';
+import { ProgressBar } from '@/components/shared/ProgressBar';
 
 interface Transformations {
   id: number;
@@ -14,17 +16,18 @@ interface Transformations {
 
 export function CharacterDetail() {
   const params = useParams();
-  const { data, isPending, isError, error } = useCharacterById(
+  const { data, isLoading, isError, error } = useCharacterById(
     parseInt(params.id ?? '1'),
   );
+  const { progress, isLoaderVisible } = useLoader(isLoading);
 
-  if (isPending) {
-    return (
-      <div className="mt-12 flex h-full items-center justify-center">
-        Loading...
-      </div>
-    );
-  }
+  const {
+    id,
+    name,
+    image,
+    description,
+    transformations = [],
+  } = (data ?? {}) as CharacterByIdResponse;
 
   if (isError) {
     return (
@@ -34,13 +37,11 @@ export function CharacterDetail() {
     );
   }
 
-  const {
-    id,
-    name,
-    image,
-    description,
-    transformations = [],
-  } = data as CharacterByIdResponse;
+  if (isLoaderVisible) {
+    return (
+      <ProgressBar progress={progress} label="Loading character details" />
+    );
+  }
 
   return (
     <>

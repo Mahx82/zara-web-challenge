@@ -15,10 +15,6 @@ export function SearchInput({ onSearch, initialValue }: Props) {
     onSearch(debouncedValue);
   }, [debouncedValue, onSearch]);
 
-  useEffect(() => {
-    setInputValue(initialValue ?? '');
-  }, [initialValue]);
-
   return (
     <div className="mx-4 mt-6 flex items-center border-b-1 border-b-black md:mx-12">
       <MagnifierIcon className="h-4 w-4 text-black" />

@@ -6,7 +6,7 @@ export function Layout() {
   return (
     <FavoritesProvider>
       <MainHeader />
-      <main className="mx-auto w-full">
+      <main className="relative mx-auto w-full">
         <Outlet />
       </main>
     </FavoritesProvider>

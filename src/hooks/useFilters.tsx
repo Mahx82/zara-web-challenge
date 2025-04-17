@@ -9,8 +9,6 @@ export interface Filters {
 export function useFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
   const characterName = searchParams.get(QUERY_PARAMS.NAME) ?? undefined;
-  const showFavorites =
-    searchParams.get(QUERY_PARAMS.SHOW_FAVORITES) === 'true';
 
   const setFilters = useCallback(
     (filters: Filters) => {
@@ -31,7 +29,6 @@ export function useFilters() {
 
   return {
     characterName,
-    showFavorites,
     setFilters,
   };
 }
