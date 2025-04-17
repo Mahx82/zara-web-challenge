@@ -22,8 +22,9 @@ describe('Character details page', () => {
         { name: 'Goku SSJ3', img: 'goku_ssj3.webp', ki: '24 Billion' },
       ];
 
-      transformations.forEach(({ name, img }) => {
+      transformations.forEach(({ name, img, ki }) => {
         cy.contains(name).should('exist');
+        cy.contains(ki).should('exist');
         cy.get(`img[alt="${name}"]`).should('have.attr', 'src', img);
       });
     });
